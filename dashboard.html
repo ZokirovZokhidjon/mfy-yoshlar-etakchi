@@ -1,0 +1,243 @@
+  <!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ёшлар етакчиси | Шахсий Кабинет</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        :root { --blue: #1b2e4b; --green: #27ae60; --orange: #f39c12; --red: #e74c3c; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; padding: 20px; }
+
+        /* ЮҚОРИ ПАНЕЛ */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto 20px;
+            background: var(--blue);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+        }
+        .home-link {
+            text-decoration: none;
+            color: white;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .home-link:hover { background: white; color: var(--blue); }
+
+        .cabinet-wrapper { max-width: 1100px; margin: 0 auto; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+        h2 { color: var(--blue); margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        .form-container { display: grid; gap: 15px; margin-bottom: 30px; }
+        label { font-weight: bold; font-size: 14px; color: #333; }
+        select, textarea { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 8px; outline: none; }
+        
+        .upload-area { border: 2px dashed var(--blue); padding: 20px; text-align: center; border-radius: 10px; cursor: pointer; background: #f9f9f9; }
+        #preview { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; display: none; margin: 10px auto; border: 2px solid #eee; }
+
+        .actions-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; min-width: 150px; padding: 13px; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-save { background: var(--blue); flex: 2; }
+        .btn-excel { background: var(--green); }
+        .btn-word { background: #2980b9; }
+        .btn-pdf { background: var(--red); }
+
+        .table-wrapper { margin-top: 40px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f8f9fa; }
+        .row-img { width: 50px; height: 40px; object-fit: cover; border-radius: 4px; }
+        .icon-btn { cursor: pointer; font-size: 18px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<header class="admin-header">
+    <div style="font-size: 18px; font-weight: bold;"><i class="fas fa-user-cog"></i> Админ Панель</div>
+    <a href="index.html" class="home-link"><i class="fas fa-home"></i> Асосий саҳифага қайтиш</a>
+</header>
+
+<div class="cabinet-wrapper">
+    <h2 id="title">Ҳисоботлар ва Тадбирлар</h2>
+
+    <input type="hidden" id="edit-id" value="-1">
+
+    <div class="form-container">
+        <div>
+            <label>Тадбир йўналиши:</label>
+            <select id="category">
+                <option>Маданий тадбирлар</option>
+                <option>Спорт тадбирлари</option>
+                <option>Бандлик масалалари</option>
+                <option>Касб-ҳунарга йўналтириш</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Маълумот матни:</label>
+            <textarea id="content" rows="4" placeholder="Батафсил ёзинг..."></textarea>
+        </div>
+
+        <div>
+            <label>Расм юклаш:</label>
+            <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                <i class="fas fa-camera fa-2x" style="color: var(--blue);"></i>
+                <p id="upload-text">Расм танлаш учун босинг</p>
+                <img id="preview" alt="Превью">
+                <input type="file" id="file-input" hidden accept="image/*" onchange="handleImage(event)">
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-bar">
+        <button class="btn btn-save" onclick="addReport()"><i class="fas fa-save"></i> САҚЛАШ</button>
+        <button class="btn btn-excel" onclick="toExcel()"><i class="fas fa-file-excel"></i> EXCEL</button>
+        <button class="btn btn-word" onclick="toWord()"><i class="fas fa-file-word"></i> WORD</button>
+        <button class="btn btn-pdf" onclick="toPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Расм</th>
+                    <th>Сана</th>
+                    <th>Йўналиш</th>
+                    <th>Мазмун</th>
+                    <th>Амаллар</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let reports = JSON.parse(localStorage.getItem('my_data')) || [];
+    let currentImgBase64 = "";
+
+    function handleImage(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function() {
+            currentImgBase64 = reader.result;
+            document.getElementById('preview').src = reader.result;
+            document.getElementById('preview').style.display = "block";
+            document.getElementById('upload-text').style.display = "none";
+        }
+        if(file) reader.readAsDataURL(file);
+    }
+
+    function addReport() {
+        const cat = document.getElementById('category').value;
+        const text = document.getElementById('content').value;
+        const editId = document.getElementById('edit-id').value;
+        const date = new Date().toLocaleDateString();
+
+        if(!text) return alert("Маълумотни киритинг!");
+
+        const data = { date, cat, text, img: currentImgBase64 };
+
+        if(editId === "-1") {
+            reports.unshift(data); // Янгиси тепага тушади
+        } else {
+            reports[editId] = data;
+            document.getElementById('edit-id').value = "-1";
+            document.getElementById('title').innerText = "Ҳисоботлар ва Тадбирлар";
+        }
+
+        localStorage.setItem('my_data', JSON.stringify(reports));
+        render();
+        reset();
+    }
+
+    function render() {
+        const body = document.getElementById('table-body');
+        body.innerHTML = reports.map((item, index) => `
+            <tr>
+                <td><img src="${item.img || 'https://via.placeholder.com/50'}" class="row-img"></td>
+                <td>${item.date}</td>
+                <td><b>${item.cat}</b></td>
+                <td>${item.text.substring(0, 40)}...</td>
+                <td>
+                    <i class="fas fa-edit icon-btn" style="color:orange" onclick="editRow(${index})"></i>
+                    <i class="fas fa-trash icon-btn" style="color:red" onclick="deleteRow(${index})"></i>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function deleteRow(i) {
+        if(confirm("Ўчирилсинми?")) {
+            reports.splice(i, 1);
+            localStorage.setItem('my_data', JSON.stringify(reports));
+            render();
+        }
+    }
+
+    function editRow(i) {
+        const item = reports[i];
+        document.getElementById('category').value = item.cat;
+        document.getElementById('content').value = item.text;
+        document.getElementById('edit-id').value = i;
+        document.getElementById('title').innerText = "Ўзгартириш режими";
+        if(item.img) {
+            document.getElementById('preview').src = item.img;
+            document.getElementById('preview').style.display = "block";
+            document.getElementById('upload-text').style.display = "none";
+            currentImgBase64 = item.img;
+        }
+    }
+
+    function reset() {
+        document.getElementById('content').value = "";
+        document.getElementById('preview').style.display = "none";
+        document.getElementById('upload-text').style.display = "block";
+        currentImgBase64 = "";
+    }
+
+    // Экспортлар (Excel, Word, PDF) - аввалгидек ишлайди
+    function toExcel() {
+        const ws = XLSX.utils.json_to_sheet(reports.map(r => ({ Sana: r.date, Yonalish: r.cat, Mazmun: r.text })));
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Hisobot");
+        XLSX.writeFile(wb, "Hisoobot.xlsx");
+    }
+
+    function toWord() {
+        let txt = "ҲИСОБОТЛАР\n\n";
+        reports.forEach(r => txt += `${r.date} | ${r.cat}\n${r.text}\n---\n`);
+        saveAs(new Blob(['\ufeff' + txt], {type: 'application/msword'}), "Hisobot.doc");
+    }
+
+    function toPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.autoTable({
+            head: [['Sana', 'Yonalish', 'Mazmun']],
+            body: reports.map(r => [r.date, r.cat, r.text])
+        });
+        doc.save("Hisobot.pdf");
+    }
+
+    window.onload = render;
+</script>
+</body>
+</html>

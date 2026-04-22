@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Етакчи Блоги - Мақола Юклаш</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .blog-container { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #1b2e4b; margin-bottom: 25px; border-bottom: 2px solid #ff5722; padding-bottom: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        textarea { height: 150px; resize: none; }
+        .file-label { display: block; background: #f8f9fa; border: 2px dashed #ff5722; padding: 20px; text-align: center; cursor: pointer; border-radius: 8px; margin-bottom: 15px; }
+        .preview-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 15px; }
+        .btn-send { width: 100%; padding: 15px; background: #ff5722; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .btn-send:hover { background: #e64a19; }
+
+        .home button{
+            width: 200px;  
+            height: 40px;
+            border-radius: 150px;
+            border-style: solid;
+            border-color: red;
+            box-shadow: 3px 5px 8px;
+        }
+        .home a{
+            text-decoration: solid;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="home">
+    <button><a href="index.html">ЧИҚИШ</a></button>
+</div>
+<div class="blog-container">
+    <div class="header">
+        <h2><i class="fas fa-edit"></i> Янги мақола ёзиш</h2>
+    </div>
+
+    <input type="text" id="title" placeholder="Мақола сарлавҳаси...">
+    
+    <label class="file-label" id="dropArea">
+        <i class="fas fa-cloud-upload-alt fa-2x"></i> <br>
+        Компьютердан расм танланг
+        <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewFile()">
+    </label>
+    
+    <img id="preview" class="preview-img">
+
+    <textarea id="text" placeholder="Мақола матнини бу ерга киритинг..."></textarea>
+
+    <button class="btn-send" onclick="postToHome()">АСОСИЙ САҲИФАГА ЖЎНАТИШ</button>
+</div>
+
+<script>
+    let imageData = "";
+
+    // Расмни кўрсатиш (Preview)
+    function previewFile() {
+        const file = document.getElementById('imageInput').files[0];
+        const reader = new FileReader();
+        const preview = document.getElementById('preview');
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+            preview.style.display = "block";
+            imageData = reader.result; // Расмни базага сақлаш учун кодга айлантириш
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Асосий саҳифага жўнатиш функцияси
+    function postToHome() {
+        const title = document.getElementById('title').value;
+        const text = document.getElementById('text').value;
+
+        if (!title || !text || !imageData) {
+            alert("Илтимос, сарлавҳа, матн ва расмни тўлиқ киритинг!");
+            return;
+        }
+
+        const newPost = {
+            id: Date.now(),
+            title: title,
+            text: text,
+            image: imageData,
+            date: new Date().toLocaleString()
+        };
+
+        // LocalStorage-га мақолани қўшиш
+        let posts = JSON.parse(localStorage.getItem('shared_posts')) || [];
+        posts.unshift(newPost);
+        localStorage.setItem('shared_posts', JSON.stringify(posts));
+
+        alert("Мақола асосий саҳифага юборилди!");
+        window.location.href = "index.html"; // Юбориб бўлгач асосий саҳифани кўриш
+    }
+</script>
+
+</body>
+</html>

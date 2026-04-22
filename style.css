@@ -1,0 +1,163 @@
+ 
+        body{
+            background-image: url(un10.jpg);
+            background-size: cover;
+        }/* Умумий созламалар */
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+}
+.main-logo {
+    width: 160px; /* Бироз каттароқ ва кўринарли */
+    border-radius: 50%;
+    border: 4px solid rgba(255, 215, 0, 0.8); /* Тилла рангли ҳошия */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); /* Соя бериш */
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.main-logo:hover {
+    transform: scale(1.05); /* Сичқонча олиб келинганда бироз катталашади */
+}
+/* Header ва Фон */
+.hero-section {
+    background: url('un10.jpg') no-repeat center center/cover;
+    height: 100vh;
+    position: relative;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.overlay {
+    position: absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.header-top, .main-nav, .hero-content { position: relative; z-index: 5; }
+
+/* Соат ва Лого */
+.main-logo { width: 120px; border-radius: 50%; margin-top: 20px; }
+#digital-clock { font-size: 2.5rem; font-weight: bold; }
+
+/* Навигация */
+.main-nav {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 30px;
+    margin-top: 20px;
+}
+.main-nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 0.9rem;
+}
+
+.main-nav a:hover{
+color: #ffd700;
+text-shadow: 5px 8px 10px;
+}
+/* Админ панел дизайни */
+.admin-container { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+.admin-dashboard {
+    display: flex;
+    background: white;
+    color: #333;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.sidebar {
+    background: #2c3e50;
+    color: white;
+    width: 250px;
+    padding: 20px;
+}
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar li { padding: 15px 0; border-bottom: 1px solid #34495e; cursor: pointer; }
+
+.admin-main { flex: 1; padding: 30px; }
+.form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 5px; font-weight: bold; }
+textarea, select, input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+.submit-btn { background: #27ae60; color: white; border: none; padding: 12px; cursor: pointer; border-radius: 5px; }
+
+/* МОБИЛ ВЕРСИЯ (768px дан кичик экранлар) */
+@media (max-width: 768px) {
+    .admin-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .main-nav a { display: block; margin: 10px 0; }
+    .hero-content h1 { font-size: 1.5rem; }
+    #digital-clock { font-size: 1.8rem; }
+}
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+
+/* Жуда кичик экранлар учун (телефонлар) */
+@media (max-width: 480px) {
+    .header-top {
+        margin-top: 10px;
+    }
+    
+    .login-btn {
+        background-color: #ffd700;
+        color: #000 !important;
+        font-weight: bold;
+    }
+}
+/* Login Modal Styles */
+.modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px); align-items: center; justify-content: center;
+}
+.login-card {
+    background: white; padding: 40px; border-radius: 20px; width: 350px;
+    text-align: center; color: #333; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.login-logo { width: 80px; margin-bottom: 20px; border-radius: 50%; }
+.input-group { position: relative; margin-bottom: 20px; }
+.input-group i { position: absolute; left: 15px; top: 12px; color: #888; }
+.input-group input { 
+    width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #ddd; 
+    border-radius: 10px; font-size: 16px; 
+}
+.auth-btn { 
+    width: 100%; padding: 12px; background: #1b2e4b; color: white; 
+    border: none; border-radius: 10px; cursor: pointer; font-weight: bold; 
+}
+
+/* Dashboard Styles (Янгича кўриниш) */
+.admin-container { 
+    display: none; /* Тизимга кирмагунча кўринмайди */
+    padding: 30px; background: #f4f7f9; min-height: 100vh;
+}
+.admin-dashboard {
+    display: grid; grid-template-columns: 280px 1fr; gap: 25px;
+    max-width: 1400px; margin: 0 auto;
+}
+.sidebar {
+    background: #1b2e4b; color: white; border-radius: 20px; padding: 25px;
+    height: fit-content; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.sidebar ul li {
+    padding: 15px; margin-bottom: 10px; border-radius: 12px;
+    transition: 0.3s; cursor: pointer; list-style: none;
+}
+.sidebar ul li:hover { background: rgba(255,255,255,0.1); }
+.admin-main {
+    background: white; border-radius: 20px; padding: 35px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+ 

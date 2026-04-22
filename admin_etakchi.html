@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <script>
+        // ҲИМОЯ: Агар рухсатнома бўлмаса, киритма!
+        if (sessionStorage.getItem('isLogged') !== 'etakchi') {
+            window.location.href = "login.html";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <title>Етакчи кабинети</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .header { background: #1b2e4b; color: white; padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-save { background: #1b2e4b; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .logout { background: #e74c3c; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2><i class="fas fa-user-graduate"></i> ЕТАКЧИ ИШЧИ СТОЛИ</h2>
+    <a href="#" onclick="logout()" class="logout">ЧИҚИШ</a>
+</div>
+
+<div class="card">
+    <h3>Янги тадбир қўшиш</h3>
+    <select id="cat">
+        <option>Маданий тадбирлар</option>
+        <option>Спорт тадбирлари</option>
+        <option>Бандлик масалалари</option>
+        <option>Касб-ҳунарга йўналтириш</option>
+    </select>
+    <textarea id="text" rows="4" placeholder="Тадбир ҳақида..."></textarea>
+    <input type="file" id="imgFile" accept="image/*">
+    <button class="btn-save" onclick="saveData()">АСОСИЙ САҲИФАГА ЮКЛАШ</button>
+</div>
+
+<script>
+    function logout() {
+        sessionStorage.clear(); // Рухсатномани бекор қилиш
+        window.location.href = "login.html";
+    }
+
+    function saveData() {
+        alert("Маълумот сақланди!");
+        // Бу ерда localStorage.setItem логикаси бўлади
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Кириш тизими</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #1b2e4b; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 35px; border-radius: 15px; width: 340px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+        h2 { color: #1b2e4b; margin-bottom: 25px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: #ff5722; box-shadow: 0 0 5px rgba(255,87,34,0.2); }
+        button { width: 100%; padding: 14px; background: #1b2e4b; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #2a3f5f; transform: translateY(-2px); }
+        .err { color: #d32f2f; font-size: 13px; display: none; margin-top: 15px; background: #ffebee; padding: 8px; border-radius: 5px; }
+        .back-link { display: block; margin-top: 20px; color: #1b2e4b; text-decoration: none; font-size: 14px; transition: 0.3s; }
+        .back-link:hover { color: #ff5722; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Тизимга кириш</h2>
+    <input type="text" id="username" placeholder="Логин">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="login()">КИРИШ</button>
+    <p id="msg" class="err"><i class="fas fa-exclamation-circle"></i> Логин ёки пароль хато!</p>
+    
+    <a href="index.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Асосий саҳифага қайтиш
+    </a>
+</div>
+
+<script>
+    function login() {
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+        const msg = document.getElementById('msg');
+
+        // Хатолик хабарини яшириш
+        msg.style.display = "none";
+
+        // 1. Админ учун кириш
+        if (user === "admin" && pass === "123") {
+            alert("Хуш келибсиз, Админ!");
+            window.location.href = "dashboard.html";
+        } 
+        // 2. Етакчи учун кириш
+        else if (user === "etakchi" && pass === "blog2026") {
+            alert("Етакчи блогига хуш келибсиз!");
+            window.location.href = "etakchi_blog.html";
+        } 
+        // 3. Ҳисобчи учун кириш
+        else if (user === "powerbank" && pass === "7575") {
+            alert("Хуш келибсиз, Жаноб ҳисобчи, ҳисоб-китобни бошладикми?");
+            window.location.href = "admin_hisobchi.html";
+        } 
+        // Агар ҳеч қайси шарт бажарилмаса
+        else {
+            msg.style.display = "block";
+        }
+    }
+
+    // "Enter" тугмасини босганда ҳам кириш имконияти
+    document.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
+</script>
+
+</body>
+</html>
