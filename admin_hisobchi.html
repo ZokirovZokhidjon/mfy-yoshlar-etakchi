@@ -3,167 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ёшлар етакчиси кабинети | Blogger Style</title>
-    
+    <title>Ҳисобчи Кабинети - МФЙ Портали</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-
     <style>
-        :root { --blogger-orange: #ff5722; --google-blue: #4285f4; }
-        body { font-family: 'Roboto', sans-serif; background-color: #f1f3f4; margin: 0; padding: 0; }
-        
-        /* Blogger Header */
-        .navbar { background: white; padding: 10px 20px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 22px; font-weight: bold; color: var(--blogger-orange); display: flex; align-items: center; gap: 10px; }
-        
-        .main-container { max-width: 1100px; margin: 20px auto; display: grid; grid-template-columns: 1fr 300px; gap: 20px; padding: 0 20px; }
+        :root { --main-blue: #1b2e4b; --accent: #ff5722; --green: #2ecc71; --red: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; color: #333; }
 
-        /* Left Side: Editor */
-        .editor-card { background: white; padding: 25px; border-radius: 8px; border: 1px solid #ddd; }
-        .post-input { width: 100%; border: none; border-bottom: 1px solid #eee; font-size: 24px; padding: 10px 0; outline: none; margin-bottom: 20px; }
-        .post-input:focus { border-bottom: 2px solid var(--blogger-orange); }
-        
-        .toolbar { background: #f8f9fa; padding: 10px; border-radius: 4px; display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; border: 1px solid #eee; }
-        
-        textarea { width: 100%; height: 400px; border: 1px solid #eee; padding: 15px; font-size: 16px; border-radius: 4px; resize: none; box-sizing: border-box; outline: none; }
+        /* Навигация */
+        .navbar { background: var(--main-blue); color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .navbar h1 { font-size: 20px; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .exit-btn { background: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .exit-btn:hover { background: #e64a19; }
 
-        /* Buttons */
-        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 8px; font-size: 13px; transition: 0.2s; }
-        .btn-publish { background: var(--google-blue); color: white; }
-        .btn-word { background: #2b579a; color: white; }
-        .btn-excel { background: #217346; color: white; }
-        .btn-pdf { background: #d32f2f; color: white; }
-        .btn:hover { filter: brightness(0.9); }
+        .main-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 25px; padding: 25px; max-width: 1400px; margin: 0 auto; }
 
-        /* Right Side: Info */
-        .sidebar-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; }
-        .sidebar-card h3 { font-size: 14px; text-transform: uppercase; color: #5f6368; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        /* Карталар стили */
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .card h3 { margin-top: 0; color: var(--main-blue); border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
 
-        /* Table */
-        .stats-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
-        .stats-table td { padding: 8px 0; border-bottom: 1px solid #f1f1f1; }
-        
-        .upload-label { display: block; width: 100%; background: #eee; text-align: center; padding: 10px; border-radius: 4px; cursor: pointer; border: 1px dashed #bbb; margin-top: 10px; font-size: 13px; }
+        /* Киритиш формаси */
+        .form-box { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 25px; background: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px solid #eef0f2; }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; outline: none; flex: 1; }
+        input:focus { border-color: var(--main-blue); }
+        .save-btn { background: var(--main-blue); color: #fff; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s; flex-basis: 100%; }
+        .save-btn:hover { background: #2c3e50; transform: translateY(-2px); }
+
+        /* Жадвал стили */
+        .table-container { overflow-x: auto; max-height: 500px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f4f7f6; text-align: left; padding: 15px; border-bottom: 2px solid #ddd; color: #555; position: sticky; top: 0; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+
+        .balance-bar { background: var(--main-blue); color: #fff; padding: 20px; border-radius: 10px; margin-top: 20px; font-size: 1.5rem; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(27, 46, 75, 0.3); }
+
+        /* Амаллар тугмалари */
+        .btn-del { color: var(--red); cursor: pointer; border: none; background: none; font-size: 1.1rem; padding: 5px; }
+        .btn-edit { color: #2196F3; cursor: pointer; border: none; background: none; font-size: 1.1rem; padding: 5px; }
+
+        /* Ўнг томон (Файллар) */
+        .file-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; margin-bottom: 12px; border-radius: 8px; border-left: 5px solid var(--accent); transition: 0.3s; }
+        .file-item:hover { transform: translateX(5px); background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .file-info h4 { margin: 0; font-size: 14px; }
+        .file-info small { color: #888; font-size: 11px; }
+
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div class="navbar">
-    <div class="logo"><i class="fab fa-blogger"></i> ЁШЛАР ЕТАКЧИСИ</div>
+<nav class="navbar">
+    <h1><i class="fas fa-calculator"></i> Бухгалтерия ва Ҳисоб-китоб</h1>
     <div style="display: flex; gap: 15px; align-items: center;">
-        <span style="font-size: 14px; color: #5f6368;"><i class="fas fa-user-circle"></i> Етакчи: <b>Shermirza</b></span>
-        <button onclick="location.href='login.html'" class="btn" style="background: #f1f3f4; color: #333;"><i class="fas fa-sign-out-alt"></i> Чиқиш</button>
+        <i class="fas fa-file-word fa-lg" style="cursor:pointer" title="Word"></i>
+        <i class="fas fa-file-excel fa-lg" style="cursor:pointer" title="Excel"></i>
+        <i class="fas fa-file-pdf fa-lg" style="cursor:pointer" title="PDF"></i>
+        <a href="index.html" class="exit-btn">ЧИҚИШ</a>
     </div>
-</div>
+</nav>
 
-<div class="main-container">
-    <div class="editor-card">
-        <input type="text" id="title" class="post-input" placeholder="Тадбир ёки ҳисобот сарлавҳаси...">
+<div class="main-layout">
+    
+    <div class="card">
+        <h3><i class="fas fa-list-alt"></i> Амалиётлар рўйхати</h3>
         
-        <div class="toolbar">
-            <button class="btn btn-publish" onclick="saveData()"><i class="fas fa-paper-plane"></i> ЮКЛАШ</button>
-            <button class="btn btn-word" onclick="toWord()"><i class="fas fa-file-word"></i> Word</button>
-            <button class="btn btn-excel" onclick="toExcel()"><i class="fas fa-file-excel"></i> Excel</button>
-            <button class="btn btn-pdf" onclick="toPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
-        </div>
-
-        <textarea id="content" placeholder="Бу ерга тадбир тафсилотларини ёзинг..."></textarea>
-    </div>
-
-    <div class="sidebar-area">
-        <div class="sidebar-card">
-            <h3><i class="fas fa-cog"></i> Созламалар</h3>
-            <p style="font-size: 12px; color: #666;">Ҳисобот типи:</p>
-            <select id="type" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
-                <option>Маънавий тадбир</option>
-                <option>Спорт мусобақаси</option>
-                <option>Беш ташаббус</option>
-                <option>Хатин-қизлар бандлиги</option>
+        <div class="form-box">
+            <input type="text" id="desc" placeholder="Изоҳ (масалан: Ҳомийлик тушуми)" style="flex: 2;">
+            <input type="number" id="amt" placeholder="Сумма">
+            <select id="cat">
+                <option value="Тушум">Тушум (+)</option>
+                <option value="Овқат">Тушлик/Овқат (-)</option>
+                <option value="Харажат">Бошқа харажат (-)</option>
             </select>
-            
-            <label for="import" class="upload-label">
-                <i class="fas fa-cloud-upload-alt"></i> Файлдан маълумот олиш
-            </label>
-            
-            <input type="file" id="import" style="display:none" onchange="importFile(event)">
+            <button class="save-btn" id="save-btn" onclick="saveData()">РЎЙХАТГА ОЛИШ</button>
         </div>
 
-        <div class="sidebar-card">
-            <h3><i class="fas fa-history"></i> Сўнгги юкланганлар</h3>
-            <table class="stats-table" id="historyTable">
-                <tbody id="historyBody">
-                    <tr><td style="color:#999; text-align:center;">Ҳозирча бўш</td></tr>
-                </tbody>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Сана</th>
+                        <th>Изоҳ</th>
+                        <th>Категория</th>
+                        <th>Сумма (сўм)</th>
+                        <th>Амаллар</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
             </table>
         </div>
+        <div class="balance-bar" id="balance">Умумий Баланс: 0 сўм</div>
     </div>
+
+    <div class="card">
+        <h3><i class="fas fa-file-invoice"></i> Ҳисобот файллар</h3>
+        
+        <div style="margin-bottom: 25px;">
+            <input type="file" id="fileInput" style="display: none;" onchange="uploadFile(this)">
+            <button onclick="document.getElementById('fileInput').click()" style="width: 100%; padding: 15px; background: #eee; border: 2px dashed #ccc; border-radius: 8px; cursor: pointer; font-weight: bold; color: #666;">
+                <i class="fas fa-cloud-upload-alt"></i> ЯНГИ ФАЙЛ ЮКЛАШ
+            </button>
+        </div>
+
+        <div id="file-list-container">
+            </div>
+    </div>
+
 </div>
 
 <script>
-    // 1. ТИЗИМГА ЮКЛАШ
+    // Firebase Созламалари (Сизнинг кодингиз сақланди)
+    const firebaseConfig = {
+        apiKey: "AIzaSyABO4zuo6GnSNWld4y0H91VI1QSgQewtRU",
+        databaseURL: "https://adminsaunadelfin-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let editKey = null;
+
+    // 1. МАЪЛУМОТНИ САҚЛАШ
     function saveData() {
-        const title = document.getElementById('title').value;
-        const text = document.getElementById('content').value;
-        if(!title || !text) { alert("Сарлавҳа ва матнни тўлдиринг!"); return; }
+        const desc = document.getElementById('desc').value;
+        const amt = parseFloat(document.getElementById('amt').value);
+        const cat = document.getElementById('cat').value;
 
-        const date = new Date().toLocaleDateString();
-        const tbody = document.getElementById('historyBody');
-        
-        if(tbody.innerText.includes("бўш")) tbody.innerHTML = "";
+        if(!desc || !amt) return alert("Маълумотни тўлиқ киритинг!");
 
-        const row = `<tr>
-            <td><i class="fas fa-file-alt" style="color:#ff5722"></i> <b>${title}</b><br><small>${date}</small></td>
-        </tr>`;
-        tbody.innerHTML = row + tbody.innerHTML;
-        alert("Ҳисобот етакчилар порталига юкланди!");
+        const finalAmt = cat === 'Тушум' ? Math.abs(amt) : -Math.abs(amt);
+        const data = { desc, amt: finalAmt, cat, date: new Date().toLocaleString() };
+
+        if(editKey) {
+            db.ref('finance/' + editKey).update(data).then(() => {
+                editKey = null;
+                document.getElementById('save-btn').innerText = "РЎЙХАТГА ОЛИШ";
+                document.getElementById('save-btn').style.background = "#1b2e4b";
+            });
+        } else {
+            db.ref('finance/').push(data);
+        }
+
+        document.getElementById('desc').value = '';
+        document.getElementById('amt').value = '';
     }
 
-    // 2. WORD ЭКСПОРТ
-    function toWord() {
-        const t = document.getElementById('title').value || "Hisobot";
-        const c = document.getElementById('content').value;
-        const blob = new Blob(['\ufeff', `САРЛАВҲА: ${t}\n\n${c}`], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = t + ".doc";
-        a.click();
+    // 2. РЕАЛ ВАҚТДА ЖАДВАЛНИ ЯНГИЛАШ
+    db.ref('finance/').on('value', s => {
+        const data = s.val();
+        const body = document.getElementById('table-body');
+        body.innerHTML = '';
+        let total = 0;
+
+        if(data) {
+            Object.entries(data).reverse().forEach(([key, v]) => {
+                total += v.amt;
+                body.innerHTML += `
+                    <tr>
+                        <td style="color: #888; font-size: 0.8rem;">${v.date}</td>
+                        <td style="font-weight: 500;">${v.desc}</td>
+                        <td><span style="padding: 3px 8px; background: #eee; border-radius: 4px; font-size: 12px;">${v.cat}</span></td>
+                        <td style="color:${v.amt > 0 ? 'var(--green)' : 'var(--red)'}; font-weight: bold;">
+                            ${v.amt.toLocaleString()}
+                        </td>
+                        <td>
+                            <button class="btn-edit" onclick="startEdit('${key}', '${v.desc}', ${Math.abs(v.amt)}, '${v.cat}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-del" onclick="deleteEntry('${key}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+        document.getElementById('balance').innerText = `Умумий Баланс: ${total.toLocaleString()} сўм`;
+    });
+
+    // 3. ТАҲРИРЛАШНИ БОШЛАШ
+    function startEdit(key, desc, amt, cat) {
+        editKey = key;
+        document.getElementById('desc').value = desc;
+        document.getElementById('amt').value = amt;
+        document.getElementById('cat').value = cat;
+        document.getElementById('save-btn').innerText = "САҚЛАШ (ЯНГИЛАШ)";
+        document.getElementById('save-btn').style.background = "var(--accent)";
+        window.scrollTo(0,0);
     }
 
-    // 3. EXCEL ЭКСПОРТ
-    function toExcel() {
-        const t = document.getElementById('title').value || "Sarlavha";
-        const c = document.getElementById('content').value || "Matn";
-        const data = [[ "Sana", "Sarlavha", "Mazmuni" ], [ new Date().toLocaleDateString(), t, c ]];
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Hisobot");
-        XLSX.writeFile(wb, t + ".xlsx");
+    // 4. ЎЧИРИШ
+    function deleteEntry(key) {
+        if(confirm("Ушбу ҳисоб-китобни ўчиришни хоҳлайсизми?")) db.ref('finance/' + key).remove();
     }
 
-    // 4. PDF ЭКСПОРТ
-    function toPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const t = document.getElementById('title').value || "Hisobot";
-        const c = document.getElementById('content').value;
-        doc.text(t, 10, 10);
-        doc.text(c, 10, 20);
-        doc.save(t + ".pdf");
-    }
-
-    // 5. EXCEL/FILE ИМПОРТ
-    function importFile(event) {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Оддий матн ёки Excel-ни ўқиш учун соддалаштирилган
-            document.getElementById('content').value = "Файл юкланди: " + file.name + "\n\n(Маълумотлар қайта ишлаш учун тайёр)";
-            alert("Файл муваффақиятли қабул қилинди!");
-        };
-        reader.readAsText(file);
+    // 5. ФАЙЛЛАРНИ БОШҚАРИШ (Local сифатида ишлайди)
+    function uploadFile(input) {
+        if (input.files && input.files[0]) {
+            const list = document.getElementById('file-list-container');
+            const fileName = input.files[0].name;
+            const date = new Date().toLocaleString();
+            
+            const fileHtml = `
+                <div class="file-item">
+                    <div class="file-info">
+                        <h4><i class="far fa-file-alt"></i> ${fileName}</h4>
+                        <small>${date}</small>
+                    </div>
+                    <div>
+                        <button class="btn-del" onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>`;
+            list.insertAdjacentHTML('afterbegin', fileHtml);
+        }
     }
 </script>
 
