@@ -7,35 +7,62 @@
     <style>
         :root { --main-blue: #1b2e4b; --accent: #ff5722; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; }
-        .navbar { background: var(--main-blue); color: white; padding: 15px 50px; display: flex; align-items: center; justify-content: space-between; }
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .news-item { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-bottom: 3px solid #ddd; }
-        .news-date { color: var(--accent); font-size: 13px; font-weight: bold; }
-        .news-item h3 { margin: 10px 0; color: var(--main-blue); }
+        
+        .navbar { background: var(--main-blue); color: white; padding: 15px 50px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 20px; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .section-title { border-left: 5px solid var(--accent); padding-left: 15px; margin-bottom: 30px; color: var(--main-blue); text-transform: uppercase; }
+
+        /* Янгиликлар рўйхати стили */
+        .news-list-item { background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--main-blue); transition: 0.3s; }
+        .news-list-item:hover { transform: translateX(10px); border-left-color: var(--accent); }
+        .news-date { color: var(--accent); font-size: 13px; font-weight: bold; display: block; margin-bottom: 10px; }
+        .news-list-item h3 { margin: 0 0 15px 0; color: var(--main-blue); font-size: 22px; }
+        .news-list-item p { color: #555; line-height: 1.7; font-size: 16px; }
+        
+        .empty-msg { text-align: center; padding: 50px; color: #999; background: white; border-radius: 12px; }
     </style>
 </head>
 <body>
 
 <nav class="navbar">
-    <div style="font-weight:bold;">ЯНГИЛИКЛАР БЎЛИМИ</div>
-    <div style="display:flex; gap:20px;">
-        <a href="index.html" style="color:white; text-decoration:none;">Асосий саҳифа</a>
+    <div class="logo"><i class="fas fa-newspaper"></i> ЯНГИЛИКЛАР</div>
+    <div class="nav-links">
+        <a href="index.html">Асосий саҳифа</a>
+        <a href="gallery.html">Галерея</a>
+        <a href="login.html">Кабинет</a>
     </div>
 </nav>
 
 <div class="container">
-    <div class="news-item">
-        <div class="news-date">23 Апрель, 2026</div>
-        <h3>Маҳалла аҳли учун сайёр қабул ўтказилади</h3>
-        <p>Эртага соат 10:00 да маҳалла марказида туман ҳокимининг ёшлар масалалари бўйича ўринбосари билан учрашув бўлиб ўтади...</p>
-    </div>
-    
-    <div class="news-item">
-        <div class="news-date">22 Апрель, 2026</div>
-        <h3>"Беш ташаббус" олимпиадасининг маҳалла босқичи якунланди</h3>
-        <p>Мусобақада ғолиб бўлган ёшлар эндиликда туман босқичида маҳалла шаънини ҳимоя қилишади.</p>
-    </div>
+    <h2 class="section-title">Сўнгги янгиликлар ва эълонлар</h2>
+    <div id="news-container">
+        </div>
 </div>
 
+<script src="script.js"></script>
+<script>
+    // Фақат шу саҳифа учун ишлайдиган кичик скрипт
+    window.onload = function() {
+        const newsContainer = document.getElementById('news-container');
+        const posts = JSON.parse(localStorage.getItem('shared_posts')) || [];
+
+        if (posts.length === 0) {
+            newsContainer.innerHTML = '<div class="empty-msg"><i class="fas fa-info-circle fa-2x"></i><br><p>Ҳозирча янгиликлар йўқ.</p></div>';
+            return;
+        }
+
+        newsContainer.innerHTML = posts.map(post => `
+            <div class="news-list-item">
+                <span class="news-date"><i class="far fa-calendar-alt"></i> ${post.date}</span>
+                <h3>${post.title}</h3>
+                <p>${post.text}</p>
+            </div>
+        `).join('');
+    };
+</script>
 </body>
 </html>
