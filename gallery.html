@@ -6,89 +6,137 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --main-blue: #1b2e4b; --accent: #ff5722; }
+        
         body { 
             background: radial-gradient(circle, #2c3e50, #1b2e4b); 
             margin: 0; 
-            height: 100vh; 
+            min-height: 100vh; 
             display: flex; 
             flex-direction: column;
-            overflow: hidden; 
+            overflow-x: hidden; 
             font-family: 'Segoe UI', sans-serif;
+            color: white;
         }
 
-        .navbar { background: rgba(27, 46, 75, 0.9); color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; z-index: 100; }
+        .navbar { background: rgba(27, 46, 75, 0.9); color: white; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; z-index: 100; position: sticky; top: 0; }
         .nav-links a { color: white; text-decoration: none; margin-left: 20px; font-weight: 500; }
 
-        /* Галерея саҳнаси */
+        /* Юқори қисм: Карусел */
         .scene {
-            flex: 1;
+            height: 500px; /* Бўйи бироз оширилди */
             display: flex;
             justify-content: center;
             align-items: center;
-            perspective: 1000px;
-            margin-top: -50px;
+            perspective: 1500px; /* Чуқурлик эффекти */
+            overflow: hidden;
         }
 
         .carousel {
             width: 200px;
-            height: 200px;
+            height: 150px;
             position: relative;
             transform-style: preserve-3d;
-            animation: rotate 20s linear infinite;
+            animation: rotate 40s linear infinite; /* Текис айланиш */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .carousel:hover { animation-play-state: paused; }
 
-        /* Марказий Логотип */
-        .center-logo {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 30px rgba(255, 87, 34, 0.5);
-            z-index: 10;
-            border: 4px solid var(--accent);
-        }
-        .center-logo img { width: 80%; object-fit: contain; }
-
-        /* Айланувчи расмлар */
         .carousel-item {
             position: absolute;
-            width: 120px;
+            width: 180px; 
             height: 120px;
-            left: 40px;
-            top: 40px;
-            border-radius: 50%;
+            border-radius: 10px;
             overflow: hidden;
             border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: 0.5s;
-            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transition: transform 0.5s;
+            background: #000;
+            /* Марказлаш учун */
+            left: 50%;
+            top: 50%;
+            margin-left: -90px;
+            margin-top: -60px;
         }
 
         .carousel-item img { width: 100%; height: 100%; object-fit: cover; }
-        .carousel-item:hover { transform: scale(1.2) !important; border-color: var(--accent); }
 
         @keyframes rotate {
             from { transform: rotateY(0deg); }
             to { transform: rotateY(360deg); }
         }
 
-        .gallery-title {
-            position: absolute;
-            bottom: 50px;
-            width: 100%;
+        /* Сарлавҳа */
+        .section-title {
             text-align: center;
-            color: white;
-            letter-spacing: 2px;
+            padding: 40px 20px 20px;
             text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Пастки Галерея (Квадратлар) */
+        .grid-container {
+            max-width: 1200px;
+            margin: 0 auto 100px auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+            justify-items: center;
+        }
+
+        .grid-item {
+            width: 200px; 
+            height: 200px; 
+            border-radius: 20px; /* Сиз сўраган 20px бурчак */
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .grid-item:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 30px rgba(255, 87, 34, 0.4);
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Катталаштирилган расм (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+        .modal img {
+            width: 400px; /* Сиз сўраган ўлчам */
+            height: 400px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 6px solid white;
+            box-shadow: 0 0 50px rgba(255,255,255,0.2);
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -105,46 +153,66 @@
 
 <div class="scene">
     <div class="carousel" id="carousel">
-        <div class="center-logo">
-            <i class="fas fa-landmark fa-4x" style="color: var(--main-blue);"></i>
-            </div>
-        
         </div>
 </div>
 
-<div class="gallery-title">
-    <h2>Мустақиллик МФЙ ҳаётидан лавҳалар</h2>
-    <p>Расмларни тўхтатиш учун сичқончани олиб боринг</p>
+<div class="section-title">
+    <h2>Фото Галерея</h2>
+    <p>Тўлиқ кўриш учун расм устига босинг</p>
+</div>
+
+<div class="grid-container" id="gridGallery">
+    </div>
+
+<div class="modal" id="modal" onclick="this.style.display='none'">
+    <img id="modalImg" src="">
 </div>
 
 <script>
-    function loadGallery() {
-        const carousel = document.getElementById('carousel');
-        const posts = JSON.parse(localStorage.getItem('shared_posts')) || [];
-        
-        // Агар мақолаларда расм бўлмаса, намунавий расмлар
-        const images = posts.filter(p => p.image).map(p => p.image);
-        if (images.length === 0) {
-            images.push('https://via.placeholder.com/200', 'https://via.placeholder.com/201', 'https://via.placeholder.com/202', 'https://via.placeholder.com/203', 'https://via.placeholder.com/204');
-        }
+    // Ишлатиладиган расмлар рўйхати
+    const images = [
+        'u1.jpg', 'u2.jpg', 'u3.jpg', 'u4.jpg', 'u5.jpg', 
+        'u6.jpg', 'u7.jpg', 'u8.jpg', 'u9.jpg', 'u10.jpg', 
+        'u11.jpg', 'u12.jpg', 'u13.jpg', 'u14.jpg', 'u15.jpg',
+        'u20.jpg', 'u21.jpg', 'u22.jpg'
+    ];
 
+    function initGallery() {
+        const carousel = document.getElementById('carousel');
+        const gridGallery = document.getElementById('gridGallery');
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modalImg');
+        
         const total = images.length;
-        const radius = 300; // Айланиш радиуси
+        const radius = 500; // Расмлар кўплиги учун радиус бироз каттароқ қилинди
 
         images.forEach((imgUrl, i) => {
-            const item = document.createElement('div');
-            item.className = 'carousel-item';
-            
-            // Ҳар бир расмни айлана бўйлаб жойлаштириш
+            // 1. Карусел қисми
+            const cItem = document.createElement('div');
+            cItem.className = 'carousel-item';
             const angle = (i * 360) / total;
-            item.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+            // Ҳар бир расмни айлана бўйлаб жойлаштириш
+            cItem.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+            cItem.innerHTML = `<img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/180x120?text=Rasm+Йўқ'">`;
+            carousel.appendChild(cItem);
+
+            // 2. Галерея қисми
+            const gItem = document.createElement('div');
+            gItem.className = 'grid-item';
+            gItem.innerHTML = `<img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/200?text=Фото'">`;
             
-            item.innerHTML = `<img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/120'">`;
-            carousel.appendChild(item);
+            // Босилганда катталашиш
+            gItem.onclick = () => {
+                modalImg.src = imgUrl;
+                modal.style.display = 'flex';
+            };
+
+            gridGallery.appendChild(gItem);
         });
     }
 
-    window.onload = loadGallery;
+    // Саҳифа юкланганда функцияни ишга тушириш
+    window.onload = initGallery;
 </script>
 
 </body>
